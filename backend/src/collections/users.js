@@ -7,7 +7,7 @@ class Usuarios {
     getUsuarios(user, password) {
         return new Promise((resolve, reject) => {
             connection.query(
-                /*sql*/`SELECT * FROM usuario WHERE userName = ? AND password = ?`,
+                /*sql*/`SELECT COUNT(*) as count FROM usuario WHERE userName = ? AND password = ?`,
                 [user, password],
                 (error, data) => {
                     if (error) {

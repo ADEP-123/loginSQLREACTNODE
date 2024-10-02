@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import dotenv from 'dotenv';
 import { SignJWT } from 'jose';
 import Usuarios from '../collections/users.js';
+import config from '../config.js';
 
 dotenv.config();
 const appToken = async (req, res) => {
@@ -11,18 +12,18 @@ const appToken = async (req, res) => {
             res.status(500).send({ message: "Recuerde enviar el user y pass" })
         } else {
             const usuario = new Usuarios()
+            const userObject = {user,pass}
             const result = await usuario.getUsuarios(user, pass)
-            if (result) {
-                // const encoder = new TextEncoder();
-                // const jwtconstructor = new SignJWT(Object.assign({}, Object.assign(rol[0])));
-                // const jwt = await jwtconstructor
-                //     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-                //     .setIssuedAt()
-                //     .setExpirationTime("2h")
-                //     .sign(encoder.encode(config.jwktKey));
-                // req.data = jwt;
-                // res.status(201).send({ status: 201, message: jwt });
-                res.status(201).send({ status: 201, message: "Maquia",result});
+            if (result[0].count>0) {
+                const encoder = new TextEncoder();
+                const jwtconstructor = new SignJWT(Object.assign({}, Object.assign(userObject)));
+                const jwt = await jwtconstructor
+                    .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+                    .setIssuedAt()
+                    .setExpirationTime("2h")
+                    .sign(encoder.encode(config.jwktKey));
+                req.data = jwt;
+                res.status(201).send({ status: 201, message: jwt });
             }
         }
     } catch (error) {
