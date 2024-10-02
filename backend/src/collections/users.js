@@ -1,3 +1,4 @@
+import { errors } from "jose";
 import getConnection from "../db/database.js";
 const connection = getConnection();
 
@@ -23,8 +24,24 @@ class Usuarios {
     createUser(username, name, password) {
         return new Promise((resolve, reject) => {
             connection.query(
-                /*sql*/`INSERT INTO usuario(userName,name,password)VALUES(?,?,?)`, 
+                /*sql*/`INSERT INTO usuario(userName,name,password)VALUES(?,?,?)`,
                 [username, name, password],
+                (error, data) => {
+                    if (error) {
+                        reject(error)
+                    } else {
+                        resolve(data)
+                    }
+                }
+            )
+        })
+    }
+
+    getUserIncome(username) {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                /*sql*/`SELECT * FROM ingresos WHERE user_ingreso = ?`,
+                [username],
                 (error, data) => {
                     if (error) {
                         reject(error)
