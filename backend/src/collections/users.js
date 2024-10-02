@@ -3,7 +3,7 @@ const connection = getConnection();
 
 class Usuarios {
     constructor() { }
-    
+
     getUsuarios(user, password) {
         return new Promise((resolve, reject) => {
             connection.query(
@@ -18,6 +18,22 @@ class Usuarios {
                 }
             );
         });
+    }
+
+    createUser(username, name, password) {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                /*sql*/`INSERT INTO usuario(userName,name,password)VALUES(?,?,?)`, 
+                [username, name, password],
+                (error, data) => {
+                    if (error) {
+                        reject(error)
+                    } else {
+                        resolve(data)
+                    }
+                }
+            )
+        })
     }
 }
 
