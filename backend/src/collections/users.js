@@ -68,6 +68,22 @@ class Usuarios {
             )
         })
     }
+
+    postNewIncome(user_ingreso, monto, fuente, metodo) {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                /*sql*/`INSERT INTO ingresos(user_ingreso, monto, fuente, metodo)VALUES(?,?,?,?)`,
+                [user_ingreso, monto, fuente, metodo],
+                (error, data) => {
+                    if (error) {
+                        reject(error)
+                    } else {
+                        resolve(data)
+                    }
+                }
+            )
+        })
+    }
 }
 
 export default Usuarios;

@@ -10,7 +10,7 @@ const initAPIRoutes = () => {
     const router = Router();
     router.use("/login", middlewareRateLimit, appToken)
     router.use("/get", middlewareRateLimit, authorizationMiddleware, getInitRoute())
-    router.use("/post", postInitRoute())
+    router.use("/post", middlewareRateLimit, postInitRoute())
     return router
 }
 
