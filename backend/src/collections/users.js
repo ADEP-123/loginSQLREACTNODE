@@ -52,6 +52,22 @@ class Usuarios {
             )
         })
     }
+
+    getUserOutcome(username) {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                /*sql*/`SELECT * FROM egresos WHERE user_ingreso = ?`,
+                [username],
+                (error, data) => {
+                    if (error) {
+                        reject(error)
+                    } else {
+                        resolve(data)
+                    }
+                }
+            )
+        })
+    }
 }
 
 export default Usuarios;
