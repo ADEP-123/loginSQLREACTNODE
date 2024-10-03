@@ -6,7 +6,8 @@ export const newOutComeDTO = [
     check("descripcion")
     .notEmpty().withMessage("El monto no puede estar vacio"),
     check("monto")
-    .notEmpty().withMessage("El monto no puede estar vacio"),
+    .notEmpty().withMessage("El monto no puede estar vacio")
+    .isFloat({ gt: 0 }).withMessage("El monto debe ser un número mayor que 0"),
     check("fuente")
     .notEmpty().withMessage("La fuente no puede estar vacia"),
     check("metodo")
