@@ -84,6 +84,22 @@ class Usuarios {
             )
         })
     }
+
+    postNewOutcome(user_ingreso, descripcion, monto, fuente, metodo) {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                /*sql*/`INSERT INTO egresos(user_ingreso, descripcion, monto, fuente, metodo)VALUES(?,?,?,?,?)`,
+                [user_ingreso, descripcion, monto, fuente, metodo],
+                (error, data) => {
+                    if (error) {
+                        reject(error)
+                    } else {
+                        resolve(data)
+                    }
+                }
+            )
+        })
+    }
 }
 
 export default Usuarios;

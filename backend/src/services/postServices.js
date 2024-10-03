@@ -11,3 +11,9 @@ export const postNewIncomeService = (user, monto, fuente, metodo) => {
     const result = userObject.postNewIncome(user, monto, fuente, metodo);
     return result
 }
+
+export const postNewOutcomeService = (user,descripcion, monto, fuente, metodo) => {
+    const userObject = new Usuarios();
+    const result = userObject.postNewOutcome(user,descripcion, monto, fuente, metodo);
+    return result
+}
