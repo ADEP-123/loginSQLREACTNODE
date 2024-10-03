@@ -100,6 +100,33 @@ class Usuarios {
             )
         })
     }
+
+    getUserBalance(user_ingreso) {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                /*sql*/`
+                    SELECT 
+                        (COALESCE(SUM(ing.monto), 0) - COALESCE(SUM(egr.monto), 0)) AS saldo
+                    FROM 
+                        usuario u
+                    LEFT JOIN 
+                        ingresos ing ON u.userName = ing.user_ingreso
+                    LEFT JOIN 
+                        egresos egr ON u.userName = egr.user_ingreso
+                    WHERE 
+                        u.userName = ?
+                `,
+                [user_ingreso],
+                (error, data) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(data[0].saldo);
+                    }
+                }
+            );
+        });
+    }
 }
 
 export default Usuarios;

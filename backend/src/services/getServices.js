@@ -11,3 +11,9 @@ export const getOutcomesService=(id)=>{
     const result = userObject.getUserOutcome(id)
     return result
 }
+
+export const getBalanceService=(id)=>{
+    const userObject = new Usuarios()
+    const result = userObject.getUserBalance(id)
+    return result
+}
