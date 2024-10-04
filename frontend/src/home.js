@@ -9,6 +9,7 @@ function Home() {
     const [balance, setBalance] = useState(null);
     const [movimientos, setMovimientos] = useState([]);
     const [showMovimientos, setShowMovimientos] = useState(false);
+    const [userName, setUserName] = useState(''); // Nuevo estado para el nombre de usuario
 
     useEffect(() => {
         const checkToken = async () => {
@@ -21,6 +22,7 @@ function Home() {
             } else {
                 console.log('Token válido');
                 fetchBalance(token);
+                fetchUserName(token); // Llamar a la función para obtener el nombre de usuario
             }
         };
         checkToken();
@@ -43,6 +45,23 @@ function Home() {
         }
     };
 
+    // Nueva función para obtener el nombre de usuario
+    const fetchUserName = async (token) => {
+        try {
+            const response = await axios.get('http://127.9.63.7:5000/contAPP/get/username', {
+                headers: {
+                    Authorization: token
+                }
+            });
+            if (response.data.status) {
+                setUserName(response.data.result[0].name);
+                console.error('No se pudo obtener el nombre del usuario');
+            }
+        } catch (error) {
+            console.error('Error al obtener el nombre del usuario:', error);
+        }
+    };
+
     const fetchMovimientos = async (token) => {
         try {
             const [egresosResponse, ingresosResponse] = await Promise.all([
@@ -53,10 +72,10 @@ function Home() {
                     headers: { Authorization: token }
                 })
             ]);
-    
+
             const egresosData = egresosResponse.data.result;
             const ingresosData = ingresosResponse.data.result;
-    
+
             // Formatear los movimientos
             const formattedMovimientos = [
                 ...egresosData.map(egreso => ({
@@ -72,10 +91,10 @@ function Home() {
                     monto: ingreso.monto
                 }))
             ];
-    
+
             // Ordenar los movimientos por fecha y hora
             formattedMovimientos.sort((a, b) => b.fecha - a.fecha); // Ordenar de más reciente a más antiguo
-    
+
             setMovimientos(formattedMovimientos);
             setShowMovimientos(true); // Muestra la tabla de movimientos
         } catch (error) {
@@ -118,7 +137,7 @@ function Home() {
                                     Salir
                                 </button>
                                 <div className="flex-grow-1 text-center">
-                                    <h5 className="card-title mb-1">Bienvenido al Panel de Usuario</h5>
+                                    <h5 className="card-title mb-1">Bienvenido, {userName}</h5> {/* Mensaje actualizado */}
                                     <p className="card-text mb-0">Aquí puedes gestionar tu cuenta y ver tu saldo.</p>
                                 </div>
                             </div>
