@@ -50,22 +50,43 @@ function Login() {
     };
 
     return (
-        <div>
-            <div>
-                <form action='' onSubmit={handleSubmit}>
-                    <div>
-                        <label>Usuario:</label>
-                        <input type='text' name="user" placeholder='Ingrese el usuario' onChange={handleInput} />
-                        {errors.user && <span>{errors.user}</span>}
+        <div className="container mt-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-body">
+                            <h2 className="card-title text-center">Iniciar Sesión</h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label className="form-label">Usuario:</label>
+                                    <input
+                                        type="text"
+                                        name="user"
+                                        className="form-control"
+                                        placeholder="Ingrese el usuario"
+                                        onChange={handleInput}
+                                    />
+                                    {errors.user && <span className="text-danger">{errors.user}</span>}
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Contraseña:</label>
+                                    <input
+                                        type="password"
+                                        name="pass"
+                                        className="form-control"
+                                        placeholder="Ingrese la contraseña"
+                                        onChange={handleInput}
+                                    />
+                                    {errors.pass && <span className="text-danger">{errors.pass}</span>}
+                                </div>
+                                <button type="submit" className="btn btn-primary w-100">Ingresar</button>
+                                <div className="mt-3 text-center">
+                                    <Link to="/signup" className="link-secondary">¿No tienes cuenta? Regístrate aquí</Link>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div>
-                        <label>Contraseña:</label>
-                        <input type='password' name="pass" placeholder='Ingrese la contraseña' onChange={handleInput} />
-                        {errors.pass && <span>{errors.pass}</span>}
-                    </div>
-                    <button type='submit'>Ingresar</button>
-                    <Link to="/signup">Registrar</Link>
-                </form>
+                </div>
             </div>
         </div>
     );
