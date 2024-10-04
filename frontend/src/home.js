@@ -1,28 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { validateTokenApi } from './auth';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import BalanceCard from './BalanceCard';
+import Movimientos from './Movimientos';
+import NuevoIngreso from './NuevoIngreso';
+import DropdownMenu from './DropdownMenu';
 
 function Home() {
     const navigate = useNavigate();
     const [balance, setBalance] = useState(null);
     const [movimientos, setMovimientos] = useState([]);
     const [showMovimientos, setShowMovimientos] = useState(false);
-    const [userName, setUserName] = useState(''); // Nuevo estado para el nombre de usuario
+    const [showNuevoIngreso, setShowNuevoIngreso] = useState(false);
+    const [userName, setUserName] = useState('');
+    const token = sessionStorage.getItem('tkCont');
 
     useEffect(() => {
         const checkToken = async () => {
-            const token = sessionStorage.getItem('tkCont');
             const isValid = await validateTokenApi(token);
             if (!isValid) {
-                sessionStorage.removeItem("tkCont");
-                localStorage.removeItem("movimientos");
+                sessionStorage.removeItem('tkCont');
+                localStorage.removeItem('movimientos');
                 navigate('/');
             } else {
-                // console.log('Token válido');
                 fetchBalance(token);
-                fetchUserName(token); // Llamar a la función para obtener el nombre de usuario
+                fetchUserName(token);
             }
         };
         checkToken();
@@ -31,35 +34,32 @@ function Home() {
     const fetchBalance = async (token) => {
         try {
             const response = await axios.get('http://127.9.63.7:5000/contAPP/get/balance', {
-                headers: {
-                    Authorization: token
-                }
+                headers: { Authorization: token },
             });
             if (response.data.status) {
                 setBalance(response.data.result);
-            } else {
-                // console.error('No se pudo obtener el saldo');
             }
         } catch (error) {
-            // console.error('Error al obtener el saldo:', error);
+            console.error('Error al obtener el saldo:', error);
         }
     };
 
-    // Nueva función para obtener el nombre de usuario
     const fetchUserName = async (token) => {
         try {
             const response = await axios.get('http://127.9.63.7:5000/contAPP/get/username', {
-                headers: {
-                    Authorization: token
-                }
+                headers: { Authorization: token },
             });
             if (response.data.status) {
                 setUserName(response.data.result[0].name);
-                // console.error('No se pudo obtener el nombre del usuario');
             }
         } catch (error) {
-            // console.error('Error al obtener el nombre del usuario:', error);
+            console.error('Error al obtener el nombre del usuario:', error);
         }
+    };
+
+    const handleShowMovimientos = () => {
+        fetchMovimientos(token);
+        setShowNuevoIngreso(false);
     };
 
     const fetchMovimientos = async (token) => {
@@ -102,108 +102,64 @@ function Home() {
         }
     };
 
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
-        }).format(value);
+    const handleCloseMovimientos = () => {
+        setShowMovimientos(false);
     };
 
-    const handleLogout = () => {
-        sessionStorage.removeItem("tkCont");
-        localStorage.removeItem("movimientos");
+    const handleNuevoIngreso = () => {
+        setShowNuevoIngreso(true);
+        setShowMovimientos(false);
+    };
+
+    const handleCancelIngreso = () => {
+        setShowNuevoIngreso(false);
+    };
+
+    const handleSalir = () => {
+        sessionStorage.removeItem('tkCont');
+        localStorage.removeItem('movimientos');
         navigate('/');
     };
 
-    const handleShowMovimientos = () => {
-        const token = sessionStorage.getItem('tkCont');
-        fetchMovimientos(token);
-    };
-
-    const handleCloseMovimientos = () => {
-        setShowMovimientos(false);
-        setMovimientos([]);
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(amount);
     };
 
     return (
         <div className="container mt-5">
-            {/* Panel de usuario */}
             <div className="row">
                 <div className="col">
                     <div className="card text-center">
-                        <div className="card-body">
-                            <div className="d-flex align-items-center">
-                                <button className="btn btn-danger me-2" onClick={handleLogout}>
-                                    Salir
-                                </button>
-                                <div className="flex-grow-1 text-center">
-                                    <h5 className="card-title mb-1">Bienvenido, {userName}</h5> {/* Mensaje actualizado */}
-                                    <p className="card-text mb-0">Aquí puedes gestionar tu cuenta y ver tu saldo.</p>
-                                </div>
+                        <div className="card-body d-flex justify-content-between">
+                            <div>
+                                <h5>Bienvenido, {userName}</h5>
+                                <p>Aquí puedes gestionar tu cuenta y ver tu saldo.</p>
                             </div>
+                            <DropdownMenu onNuevoIngreso={handleNuevoIngreso} onSalir={handleSalir} />
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div className="row justify-content-center mt-4">
-                <div className="col-md-6">
-                    <div className="card text-center">
-                        <div className="card-body">
-                            <img
-                                src={require('./imgs/alcancia.png')}
-                                alt="Alcancía"
-                                className="img-fluid"
-                                style={{ width: '100px', height: 'auto' }}
-                            />
-                            <h5 className="mt-3">Tu saldo:</h5>
-                            <p className="h4">{balance !== null ? formatCurrency(balance) : 'Cargando...'}</p>
-                            <button className="btn btn-primary mt-3" onClick={handleShowMovimientos}>
-                                Ver últimos movimientos
-                            </button>
-                        </div>
-                    </div>
+            <div className="row mt-4">
+                <div className="col">
+                    {/* Componente para mostrar el balance */}
+                    <BalanceCard balance={balance} formatCurrency={formatCurrency} handleShowMovimientos={handleShowMovimientos} />
                 </div>
             </div>
 
-            {showMovimientos && (
-                <div className="row mt-4">
-                    <div className="col-12">
-                        <div className="card">
-                            <div className="card-body">
-                                <div className="d-flex justify-content-between align-items-center">
-                                    <h5 className="card-title mx-auto">Últimos Movimientos</h5>
-                                    <button className="btn-close" onClick={handleCloseMovimientos} aria-label="Close"></button>
-                                </div>
-                                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                                    <table className="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha</th>
-                                                <th>Método</th>
-                                                <th>Descripción</th>
-                                                <th>Monto</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {movimientos.map((movimiento, index) => (
-                                                <tr key={index} style={{ color: movimiento.monto < 0 ? 'red' : 'black' }}>
-                                                    <td>{movimiento.fecha.toLocaleString()}</td>
-                                                    <td>{movimiento.metodo}</td>
-                                                    <td>{movimiento.descripcion}</td>
-                                                    <td style={{ color: movimiento.monto < 0 ? 'red' : 'black' }}>
-                                                        {formatCurrency(movimiento.monto)}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div className="row mt-4">
+                <div className="col">
+                    {/* Componente para mostrar los movimientos */}
+                    {showMovimientos && <Movimientos movimientos={movimientos} handleCloseMovimientos={handleCloseMovimientos} formatCurrency={formatCurrency} />}
                 </div>
-            )}
+            </div>
+
+            <div className="row mt-4">
+                <div className="col">
+                    {/* Componente para mostrar el formulario de nuevo ingreso */}
+                    {showNuevoIngreso && <NuevoIngreso handleCancelIngreso={handleCancelIngreso} token={token} />}
+                </div>
+            </div>
         </div>
     );
 }
