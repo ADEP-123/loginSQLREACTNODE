@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import validation from './signUpValidation.js';
+import axios from 'axios';
 
 function Signup() {
     const navigate = useNavigate();
@@ -17,15 +18,28 @@ function Signup() {
         const { name, value } = e.target;
         setValues(prev => {
             const updatedValues = { ...prev, [name]: value };
-            setErrors(validation(updatedValues)); 
+            setErrors(validation(updatedValues));
             return updatedValues;
         });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+
         if (Object.keys(errors).length === 0) {
-            navigate('/'); 
+            const values1 = {
+                username: values.userName,
+                name: values.name,
+                password: values.password1
+            }
+            axios.post("http://127.9.63.7:5000/contAPP/post/user", values1)
+                .then(res => {
+                    console.log(res)
+                    navigate('/');
+                })
+                .catch(err => console.error(err));
+
         } else {
             console.log(errors, values);
         }
