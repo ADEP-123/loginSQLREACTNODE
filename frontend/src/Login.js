@@ -33,7 +33,7 @@ function Login() {
         setErrors(validationErrors);
 
         if (Object.keys(validationErrors).length === 0) {
-            console.log(values);
+            // console.log(values);
 
             axios.get("http://127.9.63.7:5000/contAPP/login", {
                 params: values
@@ -44,12 +44,10 @@ function Login() {
                 } else if (res.status === 202) {
                     // Manejar el caso cuando el usuario no está registrado
                     setLoginError("UPS! Credenciales incorrectas o el usuario no está registrado.");
-                } else {
-                    console.error("Usuario no registrado");
                 }
             })
             .catch(err => {
-                console.error(err);
+                // console.error(err);
                 setLoginError("UPS! Ocurrió un error al intentar iniciar sesión.");
             });
         }
