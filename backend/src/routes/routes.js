@@ -11,6 +11,7 @@ const initAPIRoutes = () => {
     router.use("/login", middlewareRateLimit, appToken)
     router.use("/get", middlewareRateLimit, authorizationMiddleware, getInitRoute())
     router.use("/post", middlewareRateLimit, postInitRoute())
+    router.use("/valtoken",authorizationMiddleware)
     return router
 }
 

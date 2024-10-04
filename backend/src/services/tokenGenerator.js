@@ -5,11 +5,11 @@ import Usuarios from '../collections/users.js';
 import config from '../config.js';
 
 dotenv.config();
-const appToken = async (req, res) => {
+const appToken = async (req, res) => {    
     try {
-        const { user, pass } = req.body;
+        const { user, pass } = req.query;        
         if (!user || !pass) {
-            res.status(500).send({ message: "Recuerde enviar el user y pass" })
+            res.status(400).send({ message: "Recuerde enviar el user y pass" })
         } else {
             const usuario = new Usuarios()
             const userObject = {user,pass}
@@ -24,6 +24,8 @@ const appToken = async (req, res) => {
                     .sign(encoder.encode(config.jwktKey));
                 req.data = jwt;
                 res.status(201).send({ status: 201, message: jwt });
+            }else{
+                res.status(201).send({status:201, message:"Usuario no registrado"})
             }
         }
     } catch (error) {

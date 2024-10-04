@@ -5,8 +5,8 @@ function validation(values) {
         errors.user = "El usuario no debe estar vacio"
     }
 
-    if (values.password === "") {
-        errors.password = "La contraseña no puede estar vacia"
+    if (values.pass === "") {
+        errors.pass = "La contraseña no puede estar vacia"
     } 
     return errors;
 }
