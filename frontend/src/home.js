@@ -7,6 +7,8 @@ import axios from 'axios';
 function Home() {
     const navigate = useNavigate();
     const [balance, setBalance] = useState(null);
+    const [movimientos, setMovimientos] = useState([]);
+    const [showMovimientos, setShowMovimientos] = useState(false);
 
     useEffect(() => {
         const checkToken = async () => {
@@ -14,6 +16,7 @@ function Home() {
             const isValid = await validateTokenApi(token);
             if (!isValid) {
                 sessionStorage.removeItem("tkCont");
+                localStorage.removeItem("movimientos");
                 navigate('/');
             } else {
                 console.log('Token válido');
@@ -40,6 +43,46 @@ function Home() {
         }
     };
 
+    const fetchMovimientos = async (token) => {
+        try {
+            const [egresosResponse, ingresosResponse] = await Promise.all([
+                axios.get('http://127.9.63.7:5000/contAPP/get/egresos', {
+                    headers: { Authorization: token }
+                }),
+                axios.get('http://127.9.63.7:5000/contAPP/get/ingresos', {
+                    headers: { Authorization: token }
+                })
+            ]);
+    
+            const egresosData = egresosResponse.data.result;
+            const ingresosData = ingresosResponse.data.result;
+    
+            // Formatear los movimientos
+            const formattedMovimientos = [
+                ...egresosData.map(egreso => ({
+                    fecha: new Date(egreso.fecha),
+                    metodo: egreso.metodo,
+                    descripcion: egreso.descripcion,
+                    monto: -egreso.monto
+                })),
+                ...ingresosData.map(ingreso => ({
+                    fecha: new Date(ingreso.fecha),
+                    metodo: ingreso.metodo,
+                    descripcion: ingreso.fuente, // Mostrar fuente como descripción
+                    monto: ingreso.monto
+                }))
+            ];
+    
+            // Ordenar los movimientos por fecha y hora
+            formattedMovimientos.sort((a, b) => b.fecha - a.fecha); // Ordenar de más reciente a más antiguo
+    
+            setMovimientos(formattedMovimientos);
+            setShowMovimientos(true); // Muestra la tabla de movimientos
+        } catch (error) {
+            console.error('Error al obtener los movimientos:', error);
+        }
+    };
+
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('es-CO', {
             style: 'currency',
@@ -48,8 +91,19 @@ function Home() {
     };
 
     const handleLogout = () => {
-        sessionStorage.removeItem("tkCont"); 
-        navigate('/'); 
+        sessionStorage.removeItem("tkCont");
+        localStorage.removeItem("movimientos");
+        navigate('/');
+    };
+
+    const handleShowMovimientos = () => {
+        const token = sessionStorage.getItem('tkCont');
+        fetchMovimientos(token);
+    };
+
+    const handleCloseMovimientos = () => {
+        setShowMovimientos(false);
+        setMovimientos([]);
     };
 
     return (
@@ -85,10 +139,52 @@ function Home() {
                             />
                             <h5 className="mt-3">Tu saldo:</h5>
                             <p className="h4">{balance !== null ? formatCurrency(balance) : 'Cargando...'}</p>
+                            <button className="btn btn-primary mt-3" onClick={handleShowMovimientos}>
+                                Ver últimos movimientos
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {showMovimientos && (
+                <div className="row mt-4">
+                    <div className="col-12">
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <h5 className="card-title mx-auto">Últimos Movimientos</h5>
+                                    <button className="btn-close" onClick={handleCloseMovimientos} aria-label="Close"></button>
+                                </div>
+                                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                    <table className="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Método</th>
+                                                <th>Descripción</th>
+                                                <th>Monto</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {movimientos.map((movimiento, index) => (
+                                                <tr key={index} style={{ color: movimiento.monto < 0 ? 'red' : 'black' }}>
+                                                    <td>{movimiento.fecha.toLocaleString()}</td>
+                                                    <td>{movimiento.metodo}</td>
+                                                    <td>{movimiento.descripcion}</td>
+                                                    <td style={{ color: movimiento.monto < 0 ? 'red' : 'black' }}>
+                                                        {formatCurrency(movimiento.monto)}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
