@@ -10,7 +10,8 @@ function Login() {
     });
 
     const [errors, setErrors] = useState({});
-    const navigate = useNavigate(); // Hook para redireccionar
+    const [loginError, setLoginError] = useState(''); 
+    const navigate = useNavigate(); 
 
     // Verificar si ya existe un token en sessionStorage
     useEffect(() => {
@@ -23,6 +24,7 @@ function Login() {
 
     const handleInput = (e) => {
         setValues(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        setLoginError('');
     };
 
     const handleSubmit = (e) => {
@@ -36,8 +38,20 @@ function Login() {
             axios.get("http://127.9.63.7:5000/contAPP/login", {
                 params: values
             })
-            .then(res => saveToken(res))
-            .catch(err => console.error(err));
+            .then(res => {
+                if (res.status === 201) {
+                    saveToken(res);
+                } else if (res.status === 202) {
+                    // Manejar el caso cuando el usuario no está registrado
+                    setLoginError("UPS! Credenciales incorrectas o el usuario no está registrado.");
+                } else {
+                    console.error("Usuario no registrado");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                setLoginError("UPS! Ocurrió un error al intentar iniciar sesión.");
+            });
         }
     };
 
@@ -84,6 +98,11 @@ function Login() {
                                     <Link to="/signup" className="link-secondary">¿No tienes cuenta? Regístrate aquí</Link>
                                 </div>
                             </form>
+                            {loginError && (
+                                <div className="mt-3 text-danger text-center">
+                                    {loginError}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

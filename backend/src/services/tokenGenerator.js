@@ -25,7 +25,7 @@ const appToken = async (req, res) => {
                 req.data = jwt;
                 res.status(201).send({ status: 201, message: jwt });
             }else{
-                res.status(201).send({status:201, message:"Usuario no registrado"})
+                res.status(202).send({status:202, message:"Usuario no registrado"})
             }
         }
     } catch (error) {
