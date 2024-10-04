@@ -17,7 +17,7 @@ function Home() {
                 navigate('/');
             } else {
                 console.log('Token válido');
-                fetchBalance(token); // Llama a la función para obtener el saldo
+                fetchBalance(token);
             }
         };
         checkToken();
@@ -27,7 +27,7 @@ function Home() {
         try {
             const response = await axios.get('http://127.9.63.7:5000/contAPP/get/balance', {
                 headers: {
-                    Authorization: token 
+                    Authorization: token
                 }
             });
             if (response.data.status) {
@@ -47,6 +47,11 @@ function Home() {
         }).format(value);
     };
 
+    const handleLogout = () => {
+        sessionStorage.removeItem("tkCont"); 
+        navigate('/'); 
+    };
+
     return (
         <div className="container mt-5">
             {/* Panel de usuario */}
@@ -54,8 +59,15 @@ function Home() {
                 <div className="col">
                     <div className="card text-center">
                         <div className="card-body">
-                            <h5 className="card-title">Bienvenido al Panel de Usuario</h5>
-                            <p className="card-text">Aquí puedes gestionar tu cuenta y ver tu saldo.</p>
+                            <div className="d-flex align-items-center">
+                                <button className="btn btn-danger me-2" onClick={handleLogout}>
+                                    Salir
+                                </button>
+                                <div className="flex-grow-1 text-center">
+                                    <h5 className="card-title mb-1">Bienvenido al Panel de Usuario</h5>
+                                    <p className="card-text mb-0">Aquí puedes gestionar tu cuenta y ver tu saldo.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,7 +84,7 @@ function Home() {
                                 style={{ width: '100px', height: 'auto' }}
                             />
                             <h5 className="mt-3">Tu saldo:</h5>
-                            <p className="h4">{balance !== null ? `${formatCurrency(balance)} COP` : 'Cargando...'}</p>
+                            <p className="h4">{balance !== null ? formatCurrency(balance) : 'Cargando...'}</p>
                         </div>
                     </div>
                 </div>
