@@ -105,18 +105,11 @@ class Usuarios {
         return new Promise((resolve, reject) => {
             connection.query(
                 /*sql*/`
-                    SELECT 
-                        (COALESCE(SUM(ing.monto), 0) - COALESCE(SUM(egr.monto), 0)) AS saldo
-                    FROM 
-                        usuario u
-                    LEFT JOIN 
-                        ingresos ing ON u.userName = ing.user_ingreso
-                    LEFT JOIN 
-                        egresos egr ON u.userName = egr.user_ingreso
-                    WHERE 
-                        u.userName = ?
+                SELECT 
+                    (SELECT COALESCE(SUM(monto), 0) FROM ingresos WHERE user_ingreso = ?) -
+                    (SELECT COALESCE(SUM(monto), 0) FROM egresos WHERE user_ingreso = ?) AS saldo;            
                 `,
-                [user_ingreso],
+                [user_ingreso, user_ingreso],
                 (error, data) => {
                     if (error) {
                         reject(error);
@@ -128,11 +121,11 @@ class Usuarios {
         });
     }
 
-    getUsername(id,pass) {
+    getUsername(id, pass) {
         return new Promise((resolve, reject) => {
             connection.query(
                 /*sql*/`SELECT name FROM usuario WHERE userName = ? AND password = ?`,
-                [id,pass],
+                [id, pass],
                 (error, data) => {
                     if (error) {
                         reject(error);

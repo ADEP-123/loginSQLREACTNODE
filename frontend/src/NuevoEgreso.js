@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
 
-function NuevoEgreso({ handleCancelEgreso, token }) {
+function NuevoEgreso({ handleCancelEgreso, token, onSuccess }) {
     const [descripcion, setDescripcion] = useState('');
     const [monto, setMonto] = useState('');
     const [fuente, setFuente] = useState('');
@@ -30,6 +30,7 @@ function NuevoEgreso({ handleCancelEgreso, token }) {
                 setMetodo('Efectivo');
                 setShowConfirm(false);
                 handleCancelEgreso(); // Cierra el formulario
+                onSuccess(); // Llama a la función para actualizar balance y movimientos
                 alert('Egreso registrado exitosamente'); // Alert de éxito
             }
         } catch (error) {

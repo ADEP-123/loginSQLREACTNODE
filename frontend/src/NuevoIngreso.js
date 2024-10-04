@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
 
-function NuevoIngreso({ handleCancelIngreso, token }) {
+function NuevoIngreso({ handleCancelIngreso, token, onSuccess }) {
     const [monto, setMonto] = useState('');
     const [fuente, setFuente] = useState('');
     const [metodo, setMetodo] = useState('Transferencia');
@@ -24,13 +24,15 @@ function NuevoIngreso({ handleCancelIngreso, token }) {
                 // Ingreso exitoso: Limpiar el formulario
                 setMonto('');
                 setFuente('');
-                setMetodo('Transferencia');
+                setMetodo('Efectivo');
                 setShowConfirm(false);
-                handleCancelIngreso();
-                alert('Ingreso registrado exitosamente');
+                handleCancelIngreso(); // Cierra el formulario
+                onSuccess(); // Llama a la función para actualizar balance y movimientos
+                alert('Ingreso registrado exitosamente'); // Alert de éxito
             }
         } catch (error) {
             console.error('Error al registrar el ingreso:', error);
+            alert('Error al registrar el ingreso. Inténtalo de nuevo.'); // Alert de error
         }
     };
 

@@ -135,6 +135,11 @@ function Home() {
         setShowNuevoEgreso(false);
     };
 
+    const handleSuccess = async () => {
+        await fetchBalance(token);
+        fetchMovimientos(token);
+    };
+
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(amount);
     };
@@ -170,9 +175,9 @@ function Home() {
             <div className="row mt-4">
                 <div className="col">
                     {/* Componente para nuevo ingreso */}
-                    {showNuevoIngreso && <NuevoIngreso handleCancelIngreso={handleCancelIngreso} token={token} />}
+                    {showNuevoIngreso && <NuevoIngreso handleCancelIngreso={() => setShowNuevoIngreso(false)} token={token} onSuccess={handleSuccess} />}
                     {/* Componente para nuevo egreso */}
-                    {showNuevoEgreso && <NuevoEgreso handleCancelEgreso={handleCancelEgreso} token={token} />}
+                    {showNuevoEgreso && <NuevoEgreso handleCancelEgreso={() => setShowNuevoEgreso(false)} token={token} onSuccess={handleSuccess} />}
                 </div>
             </div>
         </div>
