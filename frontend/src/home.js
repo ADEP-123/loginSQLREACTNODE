@@ -6,6 +6,7 @@ import BalanceCard from './BalanceCard';
 import Movimientos from './Movimientos';
 import NuevoIngreso from './NuevoIngreso';
 import DropdownMenu from './DropdownMenu';
+import NuevoEgreso from './NuevoEgreso';
 
 function Home() {
     const navigate = useNavigate();
@@ -13,6 +14,7 @@ function Home() {
     const [movimientos, setMovimientos] = useState([]);
     const [showMovimientos, setShowMovimientos] = useState(false);
     const [showNuevoIngreso, setShowNuevoIngreso] = useState(false);
+    const [showNuevoEgreso, setShowNuevoEgreso] = useState(false);
     const [userName, setUserName] = useState('');
     const token = sessionStorage.getItem('tkCont');
 
@@ -58,8 +60,9 @@ function Home() {
     };
 
     const handleShowMovimientos = () => {
-        fetchMovimientos(token);
         setShowNuevoIngreso(false);
+        setShowNuevoEgreso(false);
+        fetchMovimientos(token);
     };
 
     const fetchMovimientos = async (token) => {
@@ -107,8 +110,9 @@ function Home() {
     };
 
     const handleNuevoIngreso = () => {
-        setShowNuevoIngreso(true);
+        setShowNuevoEgreso(false);
         setShowMovimientos(false);
+        setShowNuevoIngreso(true);
     };
 
     const handleCancelIngreso = () => {
@@ -121,6 +125,16 @@ function Home() {
         navigate('/');
     };
 
+    const handleNuevoEgreso = () => {
+        setShowMovimientos(false);
+        setShowNuevoIngreso(false);
+        setShowNuevoEgreso(true);
+    };
+
+    const handleCancelEgreso = () => {
+        setShowNuevoEgreso(false);
+    };
+
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(amount);
     };
@@ -129,13 +143,12 @@ function Home() {
         <div className="container mt-5">
             <div className="row">
                 <div className="col">
-                    <div className="card text-center">
-                        <div className="card-body d-flex justify-content-between">
-                            <div>
-                                <h5>Bienvenido, {userName}</h5>
-                                <p>Aquí puedes gestionar tu cuenta y ver tu saldo.</p>
+                    <div className="card">
+                        <div className="card-body d-flex justify-content-between align-items-center">
+                            <h5 className='card-title mx-auto'>Bienvenido, {userName}</h5>
+                            <div className="ml-auto">
+                                <DropdownMenu onNuevoIngreso={handleNuevoIngreso} onNuevoEgreso={handleNuevoEgreso} onSalir={handleSalir} />
                             </div>
-                            <DropdownMenu onNuevoIngreso={handleNuevoIngreso} onSalir={handleSalir} />
                         </div>
                     </div>
                 </div>
@@ -156,8 +169,10 @@ function Home() {
 
             <div className="row mt-4">
                 <div className="col">
-                    {/* Componente para mostrar el formulario de nuevo ingreso */}
+                    {/* Componente para nuevo ingreso */}
                     {showNuevoIngreso && <NuevoIngreso handleCancelIngreso={handleCancelIngreso} token={token} />}
+                    {/* Componente para nuevo egreso */}
+                    {showNuevoEgreso && <NuevoEgreso handleCancelEgreso={handleCancelEgreso} token={token} />}
                 </div>
             </div>
         </div>

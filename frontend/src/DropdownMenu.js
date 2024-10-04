@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 
-const DropdownMenu = ({ onNuevoIngreso, onSalir }) => {
+const DropdownMenu = ({ onNuevoIngreso, onNuevoEgreso, onSalir }) => {
     return (
         <Dropdown>
             <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -9,7 +9,8 @@ const DropdownMenu = ({ onNuevoIngreso, onSalir }) => {
             </Dropdown.Toggle>
             <Dropdown.Menu>
                 <Dropdown.Item onClick={onNuevoIngreso}>Nuevo Ingreso</Dropdown.Item>
-                <Dropdown.Item onClick={() => alert('Nuevo Egreso aún no implementado')}>Nuevo Egreso</Dropdown.Item>
+                {/* Aquí puedes llamar a onNuevoEgreso si implementaste esa función */}
+                <Dropdown.Item onClick={onNuevoEgreso}>Nuevo Egreso</Dropdown.Item>
                 <Dropdown.Item onClick={onSalir}>Salir</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
