@@ -127,6 +127,22 @@ class Usuarios {
             );
         });
     }
+
+    getUsername(id,pass) {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                /*sql*/`SELECT name FROM usuario WHERE userName = ? AND password = ?`,
+                [id,pass],
+                (error, data) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(data);
+                    }
+                }
+            );
+        });
+    }
 }
 
 export default Usuarios;

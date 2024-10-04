@@ -17,3 +17,9 @@ export const getBalanceService=(id)=>{
     const result = userObject.getUserBalance(id)
     return result
 }
+
+export const getUsernameService=(id,pass)=>{
+    const userObject = new Usuarios()
+    const result = userObject.getUsername(id,pass)
+    return result
+}
