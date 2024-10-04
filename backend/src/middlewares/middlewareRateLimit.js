@@ -2,7 +2,7 @@ import { rateLimit } from "express-rate-limit";
 
 let middlewareRateLimit = rateLimit({
     windowMs: 30 * 1000,
-    max: 5,
+    max: 20,
     stadarHeaders: true,
     legacyHeaders: false,
     message: (req, res) => {

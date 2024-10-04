@@ -20,7 +20,7 @@ function Home() {
                 localStorage.removeItem("movimientos");
                 navigate('/');
             } else {
-                console.log('Token válido');
+                // console.log('Token válido');
                 fetchBalance(token);
                 fetchUserName(token); // Llamar a la función para obtener el nombre de usuario
             }
@@ -38,10 +38,10 @@ function Home() {
             if (response.data.status) {
                 setBalance(response.data.result);
             } else {
-                console.error('No se pudo obtener el saldo');
+                // console.error('No se pudo obtener el saldo');
             }
         } catch (error) {
-            console.error('Error al obtener el saldo:', error);
+            // console.error('Error al obtener el saldo:', error);
         }
     };
 
@@ -55,10 +55,10 @@ function Home() {
             });
             if (response.data.status) {
                 setUserName(response.data.result[0].name);
-                console.error('No se pudo obtener el nombre del usuario');
+                // console.error('No se pudo obtener el nombre del usuario');
             }
         } catch (error) {
-            console.error('Error al obtener el nombre del usuario:', error);
+            // console.error('Error al obtener el nombre del usuario:', error);
         }
     };
 
@@ -98,7 +98,7 @@ function Home() {
             setMovimientos(formattedMovimientos);
             setShowMovimientos(true); // Muestra la tabla de movimientos
         } catch (error) {
-            console.error('Error al obtener los movimientos:', error);
+            // console.error('Error al obtener los movimientos:', error);
         }
     };
 
