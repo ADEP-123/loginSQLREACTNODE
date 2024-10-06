@@ -1,3 +1,4 @@
+DROP DATABASE contabilidad;
 CREATE DATABASE contabilidad;
 
 USE contabilidad;
@@ -7,7 +8,8 @@ CREATE TABLE usuario (
     userName VARCHAR(50) NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    PRIMARY KEY (userName)
+    PRIMARY KEY (userName),
+    saldo REAL DEFAULT 0
 );
 
 CREATE TABLE ingresos (
