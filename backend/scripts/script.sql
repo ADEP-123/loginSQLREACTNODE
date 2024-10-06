@@ -12,26 +12,47 @@ CREATE TABLE usuario (
     saldo REAL DEFAULT 0
 );
 
+
+CREATE TABLE fuente (
+    id_fuente INTEGER PRIMARY KEY AUTO_INCREMENT,
+    user_fuente VARCHAR(50) NOT NULL, 
+    nombre_fuente VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    estado ENUM('active', 'delete') DEFAULT 'active', 
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_fuente) REFERENCES usuario (userName)
+);
+
 CREATE TABLE ingresos (
     id_ingreso INTEGER PRIMARY KEY AUTO_INCREMENT,
     user_ingreso VARCHAR(50) NOT NULL,
-    monto REAL NOT NULL,
-    fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fuente TEXT,
+    id_fuente INTEGER NOT NULL,
     metodo TEXT,
-    FOREIGN KEY (user_ingreso) REFERENCES usuario (userName)
+    descripcion TEXT NOT NULL,
+    monto REAL NOT NULL,
+    fecha DATE NOT NULL,
+    estado ENUM('active', 'delete') DEFAULT 'active',
+    fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_ingreso) REFERENCES usuario (userName),
+    FOREIGN KEY (user_ingreso, id_fuente) REFERENCES fuente (user_fuente,id_fuente)
 )
 
 CREATE TABLE egresos (
     id_ingreso INTEGER PRIMARY KEY AUTO_INCREMENT,
     user_ingreso VARCHAR(50) NOT NULL,
+    id_fuente INTEGER NOT NULL,
+    metodo TEXT,
     descripcion TEXT NOT NULL,
     monto REAL NOT NULL,
-    fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fuente TEXT,
-    metodo TEXT,
-    FOREIGN KEY (user_ingreso) REFERENCES usuario (userName)
+    fecha DATE NOT NULL ,
+    estado ENUM('active', 'delete') DEFAULT 'active',
+    fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_ingreso) REFERENCES usuario (userName),
+    FOREIGN KEY (user_ingreso, id_fuente) REFERENCES fuente (user_fuente,id_fuente)
 )
+
+
 /* Insercion de datos */
 INSERT INTO
     usuario (userName, name, password)
@@ -95,42 +116,3 @@ VALUES (
         'Servicios Públicos',
         'Efectivo'
     );
-
-SELECT SUM(monto) FROM ingresos WHERE user_ingreso = 'adep123';
-
-SELECT SUM(monto) FROM egresos WHERE user_ingreso = 'adep123';
-
-SELECT (
-        SELECT COALESCE(SUM(monto), 0)
-        FROM ingresos
-        WHERE
-            user_ingreso = 'adep123'
-    ) AS total_ingresos,
-    (
-        SELECT COALESCE(SUM(monto), 0)
-        FROM egresos
-        WHERE
-            user_ingreso = 'adep123'
-    ) AS total_egresos;
-
-SELECT u.userName, COUNT(ing.monto) AS num_ingresos, COUNT(egr.monto) AS num_egresos
-FROM
-    usuario u
-    LEFT JOIN ingresos ing ON u.userName = ing.user_ingreso
-    LEFT JOIN egresos egr ON u.userName = egr.user_ingreso
-WHERE
-    u.userName = 'adep123'
-GROUP BY
-    u.userName;
-
-SELECT (
-        SELECT COALESCE(SUM(monto), 0)
-        FROM ingresos
-        WHERE
-            user_ingreso = 'adep123'
-    ) - (
-        SELECT COALESCE(SUM(monto), 0)
-        FROM egresos
-        WHERE
-            user_ingreso = 'adep123'
-    ) AS saldo;
