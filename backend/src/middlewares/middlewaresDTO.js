@@ -3,6 +3,7 @@ import { Router } from "express";
 import { newUserDTO } from "../routes/DTO/newUserDTO.js";
 import { newIncomeDTO } from "../routes/DTO/newIncomeDTO.js";
 import { newOutComeDTO } from "../routes/DTO/newOutComeDTO.js";
+import { newFuenteDTO } from "../routes/DTO/newFuenteDTO.js";
 
 function validador(req, res, next) {
     const errors = validationResult(req);
@@ -26,6 +27,11 @@ newIncomeMiddlewareDTO.use(newIncomeDTO, (req, res, next) => {
 })
 
 export const newOutcomeMiddlewareDTO = Router();
-newOutcomeMiddlewareDTO.use(newOutComeDTO, (req, res, next) => {   
+newOutcomeMiddlewareDTO.use(newOutComeDTO, (req, res, next) => {
+    validador(req, res, next)
+})
+
+export const newFuenteMiddlewareDTO = Router();
+newFuenteMiddlewareDTO.use(newFuenteDTO, (req, res, next) => {
     validador(req, res, next)
 })
