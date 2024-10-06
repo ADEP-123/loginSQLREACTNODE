@@ -1,14 +1,16 @@
+import Income from "../collections/income.js";
+import Outcome from "../collections/outcome.js";
 import Usuarios from "../collections/users.js";
 
 export const getIncomesService=(id)=>{
-    const userObject = new Usuarios()
-    const result = userObject.getUserIncome(id)
+    const incomeObject = new Income()
+    const result = incomeObject.getUserIncome(id)
     return result
 }
 
 export const getOutcomesService=(id)=>{
-    const userObject = new Usuarios()
-    const result = userObject.getUserOutcome(id)
+    const outcomeObject = new Outcome()
+    const result = outcomeObject.getUserOutcome(id)
     return result
 }
 

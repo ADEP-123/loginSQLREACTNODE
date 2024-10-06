@@ -35,102 +35,23 @@ class Usuarios {
                 }
             )
         })
-    }
-
-    getUserIncome(username) {
-        return new Promise((resolve, reject) => {
-            connection.query(
-                /*sql*/`SELECT * FROM ingresos WHERE user_ingreso = ?`,
-                [username],
-                (error, data) => {
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve(data)
-                    }
-                }
-            )
-        })
-    }
-
-    getUserOutcome(username) {
-        return new Promise((resolve, reject) => {
-            connection.query(
-                /*sql*/`SELECT * FROM egresos WHERE user_ingreso = ?`,
-                [username],
-                (error, data) => {
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve(data)
-                    }
-                }
-            )
-        })
-    }
-
-    postNewIncome(user_ingreso, monto, fuente, metodo) {
-        return new Promise((resolve, reject) => {
-            connection.query(
-                /*sql*/`INSERT INTO ingresos(user_ingreso, monto, fuente, metodo)VALUES(?,?,?,?)`,
-                [user_ingreso, monto, fuente, metodo],
-                (error, data) => {
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve(data)
-                    }
-                }
-            )
-        })
-    }
-
-    postNewOutcome(user_ingreso, descripcion, monto, fuente, metodo) {
-        return new Promise((resolve, reject) => {
-            connection.query(
-                /*sql*/`INSERT INTO egresos(user_ingreso, descripcion, monto, fuente, metodo)VALUES(?,?,?,?,?)`,
-                [user_ingreso, descripcion, monto, fuente, metodo],
-                (error, data) => {
-                    if (error) {
-                        reject(error)
-                    } else {
-                        resolve(data)
-                    }
-                }
-            )
-        })
-    }
+    }   
 
     getUserBalance(user_ingreso) {
         return new Promise((resolve, reject) => {
             connection.query(
                 /*sql*/`
-                SELECT 
-                    (SELECT COALESCE(SUM(monto), 0) FROM ingresos WHERE user_ingreso = ?) -
-                    (SELECT COALESCE(SUM(monto), 0) FROM egresos WHERE user_ingreso = ?) AS saldo;            
+                SELECT saldo FROM usuario WHERE userName = ?;
                 `,
-                [user_ingreso, user_ingreso],
+                [user_ingreso],
                 (error, data) => {
                     if (error) {
                         reject(error);
                     } else {
+                        if (data.length === 0) {
+                            return reject(new Error('Usuario no encontrado.'));
+                        }
                         resolve(data[0].saldo);
-                    }
-                }
-            );
-        });
-    }
-
-    getUsername(id, pass) {
-        return new Promise((resolve, reject) => {
-            connection.query(
-                /*sql*/`SELECT name FROM usuario WHERE userName = ? AND password = ?`,
-                [id, pass],
-                (error, data) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(data);
                     }
                 }
             );
