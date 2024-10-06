@@ -78,6 +78,109 @@ class Income {
         });
     }
 
+    updateIncome(id_ingreso, user_ingreso, monto, fuente, metodo) {
+        return new Promise((resolve, reject) => {
+            // Obtener el ingreso existente para poder calcular la diferencia en el saldo
+            connection.query(
+                /*sql*/`SELECT monto FROM ingresos WHERE id_ingreso = ? AND user_ingreso = ? AND estado = 'active'`,
+                [id_ingreso, user_ingreso],
+                (error, results) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    if (results.length === 0) {
+                        return reject(new Error('Ingreso no encontrado o no pertenece al usuario.'));
+                    }
+
+                    const oldMonto = results[0].monto;
+
+                    // Obtener id_fuente
+                    connection.query(
+                        /*sql*/`SELECT id_fuente FROM fuente WHERE user_fuente = ? AND nombre_fuente = ? AND estado = 'active'`,
+                        [user_ingreso, fuente],
+                        (error, results) => {
+                            if (error) {
+                                return reject(error);
+                            }
+                            if (results.length === 0) {
+                                return reject(new Error('Fuente no encontrada o no está activa.'));
+                            }
+
+                            const id_fuente = results[0].id_fuente;
+
+                            // Actualizar ingreso
+                            connection.query(
+                                /*sql*/`UPDATE ingresos SET id_fuente = ?, monto = ?, metodo = ?, fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_ingreso = ? AND user_ingreso = ?`,
+                                [id_fuente, monto, metodo, id_ingreso, user_ingreso],
+                                (error, data) => {
+                                    if (error) {
+                                        return reject(error);
+                                    }
+
+                                    // Actualizar saldo del usuario
+                                    const diferencia = monto - oldMonto;
+                                    connection.query(
+                                        /*sql*/`UPDATE usuario SET saldo = saldo + ? WHERE userName = ?`,
+                                        [diferencia, user_ingreso],
+                                        (error, saldoUpdateResult) => {
+                                            if (error) {
+                                                return reject(error);
+                                            }
+                                            resolve(data);
+                                        }
+                                    );
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
+    }
+
+    // Método para eliminar un ingreso (cambiar estado a 'delete')
+    deleteIncome(id_ingreso, user_ingreso) {
+        return new Promise((resolve, reject) => {
+            // Obtener el ingreso existente para poder restar del saldo
+            connection.query(
+                /*sql*/`SELECT monto FROM ingresos WHERE id_ingreso = ? AND user_ingreso = ? AND estado = 'active'`,
+                [id_ingreso, user_ingreso],
+                (error, results) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    if (results.length === 0) {
+                        return reject(new Error('Ingreso no encontrado o no pertenece al usuario.'));
+                    }
+
+                    const monto = results[0].monto;
+
+                    // Cambiar el estado del ingreso a 'delete'
+                    connection.query(
+                        /*sql*/`UPDATE ingresos SET estado = 'delete', fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_ingreso = ? AND user_ingreso = ?`,
+                        [id_ingreso, user_ingreso],
+                        (error, data) => {
+                            if (error) {
+                                return reject(error);
+                            }
+
+                            // Actualizar saldo del usuario
+                            connection.query(
+                                /*sql*/`UPDATE usuario SET saldo = saldo - ? WHERE userName = ?`,
+                                [monto, user_ingreso],
+                                (error, saldoUpdateResult) => {
+                                    if (error) {
+                                        return reject(error);
+                                    }
+                                    resolve(data);
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
+    }
 
 }
 
