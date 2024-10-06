@@ -1,3 +1,4 @@
+import Fuentes from "../collections/fuentes.js";
 import Income from "../collections/income.js";
 import Outcome from "../collections/outcome.js";
 import Usuarios from "../collections/users.js";
@@ -23,5 +24,11 @@ export const getBalanceService=(id)=>{
 export const getUsernameService=(id,pass)=>{
     const userObject = new Usuarios()
     const result = userObject.getUsername(id,pass)
+    return result
+}
+
+export const getFuentesService=(id_usuario)=>{
+    const fuenteObject = new Fuentes()
+    const result = fuenteObject.getUserFuentes(id_usuario)
     return result
 }
