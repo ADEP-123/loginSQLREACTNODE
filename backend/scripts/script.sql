@@ -61,58 +61,55 @@ VALUES (
         "Andres Elizalde",
         "ADEPadep123456"
     );
-
 INSERT INTO
-    ingresos (
-        user_ingreso,
-        monto,
-        fuente,
-        metodo
-    )
-VALUES (
-        'adep123',
-        1500.00,
-        'Salario',
-        'Transferencia'
-    ),
-    (
-        'adep123',
-        200.00,
-        'Venta de productos',
-        'Efectivo'
-    ),
-    (
-        'adep123',
-        500.00,
-        'Inversión',
-        'Cheque'
-    ),
-    (
-        'adep123',
-        300.00,
-        'Regalo',
-        'Transferencia'
-    );
+    fuente (user_fuente, nombre_fuente, descripcion)
+VALUES 
+    ('adep123', 'Salario', 'Ingresos por salario mensual'),
+    ('adep123', 'Venta de productos', 'Ingresos por ventas de productos diversos'),
+    ('adep123', 'Inversión', 'Ingresos por inversiones'),
+    ('adep123', 'Regalo', 'Ingresos recibidos como regalos'),
+    ('adep123', 'Proveedores', 'Egresos por compra a proveedores'),
+    ('adep123', 'Servicios Públicos', 'Egresos por pago de servicios públicos');
 
+-- Ingresos
 INSERT INTO
-    egresos (
-        user_ingreso,
-        descripcion,
-        monto,
-        fuente,
-        metodo
-    )
-VALUES (
-        'adep123',
-        'Compra de materiales',
-        300.00,
-        'Proveedores',
-        'Tarjeta de crédito'
-    ),
-    (
-        'adep123',
-        'Pago de servicios',
-        150.00,
-        'Servicios Públicos',
-        'Efectivo'
-    );
+    ingresos (user_ingreso, id_fuente, descripcion, monto, metodo, fecha)
+VALUES
+    ('adep123', 1, 'Salario mensual', 150000.00, 'Transferencia', CURDATE()),  
+    ('adep123', 2, 'Venta de productos diversos', 200000.00, 'Efectivo', CURDATE()),  
+    ('adep123', 3, 'Inversión en fondos', 500000.00, 'Cheque', CURDATE()),  
+    ('adep123', 4, 'Regalo de cumpleaños', 300000.00, 'Transferencia', CURDATE());
+
+-- Actualización del saldo del usuario
+UPDATE usuario
+SET saldo = saldo + 150000.00
+WHERE userName = 'adep123';
+
+UPDATE usuario
+SET saldo = saldo + 200000.00
+WHERE userName = 'adep123';
+
+UPDATE usuario
+SET saldo = saldo + 500000.00
+WHERE userName = 'adep123';
+
+UPDATE usuario
+SET saldo = saldo + 300000.00
+WHERE userName = 'adep123';
+
+
+-- Egresos
+INSERT INTO
+    egresos (user_ingreso, id_fuente, descripcion, monto, metodo, fecha)
+VALUES
+    ('adep123', 5, 'Compra de materiales a proveedores', 350000.00, 'Tarjeta de crédito', CURDATE()), 
+    ('adep123', 6, 'Pago de servicios públicos', 250000.00, 'Efectivo', CURDATE());
+
+-- Actualización del saldo del usuario
+UPDATE usuario
+SET saldo = saldo - 350000.00
+WHERE userName = 'adep123';
+
+UPDATE usuario
+SET saldo = saldo - 250000.00
+WHERE userName = 'adep123';
