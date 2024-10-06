@@ -6,6 +6,7 @@ import { authorizationMiddleware } from '../middlewares/authorizationMiddleware.
 import getInitRoute from './getRoutes.js';
 import valToken from '../services/valtoken.js';
 import putInitRoute from './putRoutes.js';
+import deleteInitRoute from './deleteRoutes.js';
 
 
 const initAPIRoutes = () => {
@@ -14,6 +15,7 @@ const initAPIRoutes = () => {
     router.use("/get", middlewareRateLimit, authorizationMiddleware, getInitRoute())
     router.use("/post", middlewareRateLimit, postInitRoute())
     router.use("/put",middlewareRateLimit,authorizationMiddleware,putInitRoute())
+    router.use("/delete",middlewareRateLimit,authorizationMiddleware,deleteInitRoute())
     router.use("/valtoken",authorizationMiddleware,valToken)
     return router
 }
