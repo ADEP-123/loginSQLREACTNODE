@@ -1,5 +1,6 @@
 import Fuentes from "../collections/fuentes.js"
 import Income from "../collections/income.js"
+import Outcome from "../collections/outcome.js"
 
 export const putnewFuenteService = (id, user, nombre, descripcion) => {
     const fuenteObject = new Fuentes()
@@ -10,5 +11,11 @@ export const putnewFuenteService = (id, user, nombre, descripcion) => {
 export const putIncomeService = (id, user, monto, fuente, metodo) => {
     const incomeObject = new Income()
     const result = incomeObject.updateIncome(id, user, monto, fuente, metodo)
+    return result
+}
+
+export const putOutcomeService = (id, user, descripcion,monto, fuente, metodo) => {
+    const outcomeObject = new Outcome()
+    const result = outcomeObject.updateOutcome(id, user, descripcion,monto, fuente, metodo)    
     return result
 }
