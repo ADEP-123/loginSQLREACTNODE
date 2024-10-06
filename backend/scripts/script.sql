@@ -39,8 +39,8 @@ CREATE TABLE ingresos (
 )
 
 CREATE TABLE egresos (
-    id_ingreso INTEGER PRIMARY KEY AUTO_INCREMENT,
-    user_ingreso VARCHAR(50) NOT NULL,
+    id_egreso INTEGER PRIMARY KEY AUTO_INCREMENT,
+    user_egreso VARCHAR(50) NOT NULL,
     id_fuente INTEGER NOT NULL,
     metodo TEXT,
     descripcion TEXT NOT NULL,
@@ -48,8 +48,8 @@ CREATE TABLE egresos (
     fecha DATE NOT NULL ,
     estado ENUM('active', 'delete') DEFAULT 'active',
     fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_ingreso) REFERENCES usuario (userName),
-    FOREIGN KEY (user_ingreso, id_fuente) REFERENCES fuente (user_fuente,id_fuente)
+    FOREIGN KEY (user_egreso) REFERENCES usuario (userName),
+    FOREIGN KEY (user_egreso, id_fuente) REFERENCES fuente (user_fuente,id_fuente)
 )
 
 
@@ -100,7 +100,7 @@ WHERE userName = 'adep123';
 
 -- Egresos
 INSERT INTO
-    egresos (user_ingreso, id_fuente, descripcion, monto, metodo, fecha)
+    egresos (user_egreso, id_fuente, descripcion, monto, metodo, fecha)
 VALUES
     ('adep123', 5, 'Compra de materiales a proveedores', 350000.00, 'Tarjeta de crédito', CURDATE()), 
     ('adep123', 6, 'Pago de servicios públicos', 250000.00, 'Efectivo', CURDATE());
