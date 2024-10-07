@@ -1,3 +1,4 @@
+DROP DATABASE contabilidad;
 CREATE DATABASE contabilidad;
 
 USE contabilidad;
@@ -29,7 +30,7 @@ CREATE TABLE egresos (
     fuente TEXT,
     metodo TEXT,
     FOREIGN KEY (user_ingreso) REFERENCES usuario (userName)
-)
+);
 /* Insercion de datos */
 INSERT INTO
     usuario (userName, name, password)
