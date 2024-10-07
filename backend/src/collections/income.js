@@ -185,3 +185,7 @@ class Income {
 }
 
 export default Income;
+
+
+
+// ARREGLAR INCOME PORQUE NO TIENE DESCRIPCION AL CREAR UNO NUEVO
